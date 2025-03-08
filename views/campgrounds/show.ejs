@@ -1,0 +1,100 @@
+<%  layout('layouts/boilerplate')  %>
+<link rel="stylesheet" href="/stylesheets/stars.css">
+<style>
+    .carousel-item {
+        height: 400px; /* Fixed height for carousel */
+    }
+    .carousel-item img {
+        object-fit: cover; /* Ensure image covers the area while maintaining aspect ratio */
+        object-position: center; /* Center the image */
+        height: 100%;
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-md-7">
+        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <%  campground.images.forEach((img,i) => { %>
+                <div class="carousel-item <%= i=== 0 ? 'active' : '' %>">
+                    <img src="<%=img.url%>" class="d-block w-100" alt="Campground Image">
+                </div>
+                <%  }) %>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+        
+        <div class="card-body">
+            <h5 class="card-title"><%= campground.title %></h5>
+            <p class="card-text"><%= campground.description %></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">Submitted By: <%= campground.author.username %></li>
+            <li class="list-group-item"><%= campground.location %></li>
+            <li class="list-group-item"> $ <%= campground.price %></li>
+        </ul>
+        <% if(signedInUser && campground.author.equals(signedInUser._id)){ %>
+        <div class="card-body">
+            <a class="btn btn-primary" href="/campground/<%=campground._id%>/edit" class="card-link">Edit</a>
+            <form class="d-inline" action="/campground/<%= campground._id%>?_method=DELETE" method="POST">
+                <button class="btn btn-danger">Delete</button>
+            </form>
+        </div>
+        <% } %>
+    </div>
+    
+    <div class="col-md-5">
+        <h1>Leave a Review</h1>
+        <form action="/campground/<%=campground._id%>/reviews" method="POST" novalidate class="needs-validation">
+            <fieldset class="starability-basic">
+                <input type="radio" id="no-rate" class="input-no-rate" name="review[rating]" value="1" checked aria-label="No rating." />
+                <input type="radio" id="first-rate1" name="review[rating]" value="1" />
+                <label for="first-rate1" title="Terrible">1 star</label>
+                <input type="radio" id="first-rate2" name="review[rating]" value="2" />
+                <label for="first-rate2" title="Not good">2 stars</label>
+                <input type="radio" id="first-rate3" name="review[rating]" value="3" />
+                <label for="first-rate3" title="Average">3 stars</label>
+                <input type="radio" id="first-rate4" name="review[rating]" value="4" />
+                <label for="first-rate4" title="Very good">4 stars</label>
+                <input type="radio" id="first-rate5" name="review[rating]" value="5" />
+                <label for="first-rate5" title="Amazing">5 stars</label>
+            </fieldset>
+            <div class="mb-3">
+                <label class="form-label" for="review">Review</label>
+                <textarea class="form-control" name="review[body]" id="review" required></textarea>
+            </div>
+            <button class="btn btn-success mb-3">Submit</button>
+        </form>
+        
+        <% for(let review of campground.reviews){ %>
+        <div class="card mb-3">
+            <div class="card-body">
+                <h6><%= review.author.username %></h6>
+                <h6 class="card-title">Rating: <%= review.rating %></h6>
+                <p class="starability-result" data-rating="<%= review.rating %>">
+                    Rated: <%= review.rating %>
+                </p>
+                <p class="card-text">Review: <%= review.body %></p>
+            </div>
+        </div>
+        <% } %>
+        <div id="map" style="width: 500px; height:400px"></div>
+    </div>
+    
+
+
+
+<script>
+    const maptilerApiKey = '<%- process.env.MAPTILER_API_KEY %>';
+    const campground = <%- JSON.stringify(campground) %>
+</script>
+
+<script src="/javascript/showPageMap.js"></script>
