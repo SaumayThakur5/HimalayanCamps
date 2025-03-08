@@ -44,7 +44,7 @@ cloudinary.api.ping((error, result) => {
 app.use(express.static('public'));
 
 // Database connection
-const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelpCamp";
+ const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelpCamp";
 
 mongoose.connect(dbUrl)
     .then(() => {
@@ -58,7 +58,7 @@ mongoose.connect(dbUrl)
 // Session store setup
 const store = new MongoDbStore({
     url: dbUrl,
-    secret: process.env.SESSION_SECRET || 'default_secret',
+    secret: process.env.SECRET || 'default_secret',
     touchAfter: 24 * 60 * 60
 });
 
@@ -70,7 +70,7 @@ store.on('error', function(e) {
 const sessionConfig = {
     store,
     name: 'session', // Don't use the default connect.sid
-    secret: process.env.SESSION_SECRET || 'default_secret',
+    secret: process.env.SECRET || 'default_secret',
     resave: false,
     saveUninitialized: true,
     cookie: {
