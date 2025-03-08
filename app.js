@@ -14,7 +14,7 @@ const passport = require('passport');
 const localStrategy = require('passport-local');
 const User = require('./models/user');
 const session = require('express-session');
-const MongoDbStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const flash = require('connect-flash');
 const {isLoggedIn} = require('./middleware');
 const multer = require('multer');
@@ -44,7 +44,7 @@ cloudinary.api.ping((error, result) => {
 app.use(express.static('public'));
 
 // Database connection
- const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelpCamp";
+const dbUrl = (process.env.DB_URL || "mongodb://localhost:27017/yelpCamp") + "?tls=true&tlsAllowInvalidCertificates=false";
 
 mongoose.connect(dbUrl)
     .then(() => {
@@ -56,11 +56,11 @@ mongoose.connect(dbUrl)
     });
 
 // Session store setup
-const store = new MongoDbStore({
-    url: dbUrl,
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
     secret: process.env.SECRET || 'default_secret',
     touchAfter: 24 * 60 * 60
-});
+  });
 
 store.on('error', function(e) {
     console.log("SESSION STORE ERROR", e);
