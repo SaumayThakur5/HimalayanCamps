@@ -14,7 +14,7 @@ const passport = require('passport');
 const localStrategy = require('passport-local');
 const User = require('./models/user');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const MongoDbStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const {isLoggedIn} = require('./middleware');
 const multer = require('multer');
@@ -56,12 +56,11 @@ mongoose.connect(dbUrl)
     });
 
 // Session store setup
-const store = MongoStore.create({
-    mongoUrl: dbUrl,
+const store = new MongoDbStore({
+    url: dbUrl,
     secret: process.env.SECRET || 'default_secret',
     touchAfter: 24 * 60 * 60
-  });
-
+});
 store.on('error', function(e) {
     console.log("SESSION STORE ERROR", e);
 });
