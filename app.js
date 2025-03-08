@@ -195,7 +195,7 @@ app.put('/campground/:id', isLoggedIn, upload.array('image'), catchAsync(async(r
     const imgs = req.files.map(f => ({url: f.path, filename: f.filename}));
     campground.images.push(...imgs);
     await campground.save();
-    req.flash('success', 'Successfully updated Campground');
+    //req.flash('success', 'Successfully updated Campground');
     res.redirect(`/campground/${campground._id}`);
 }));
 
