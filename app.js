@@ -44,7 +44,7 @@ cloudinary.api.ping((error, result) => {
 app.use(express.static('public'));
 
 // Database connection
-const dbUrl = process.env.DATABASE_URL || "mongodb://localhost:27017/yelpCamp";
+const dbUrl = process.env.DB_URL || "mongodb://localhost:27017/yelpCamp";
 
 mongoose.connect(dbUrl)
     .then(() => {
@@ -69,7 +69,7 @@ store.on('error', function(e) {
 // Session configuration
 const sessionConfig = {
     store,
-    name: 'yelp_session', // Don't use the default connect.sid
+    name: 'session', // Don't use the default connect.sid
     secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: true,
